@@ -1,24 +1,42 @@
-import axios from 'axios';
-
-const perPage = 40;
-let totalPages = 0;
-
-export async function fetchImmages(query, currentPage) {
-  const BASE_URL = 'https://pixabay.com/api/';
-  const API_KEY = '35918460-7c3da85385fde4b8ea2396448';
-  const params = new URLSearchParams({
-    key: API_KEY,
-    q: query,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    page: currentPage,
-    per_page: perPage,
-  });
-
-  const response = await axios.get(`${BASE_URL}?${params}`);
-  totalPages = response.data.totalHits / perPage;
-  return response;
-}
-
-export { totalPages };
+export function createGalleryMarkup(elem, arr) {
+    const markup = arr
+      .map(
+        ({
+          webformatURL,
+          largeImageURL,
+          tags,
+          likes,
+          views,
+          comments,
+          downloads,
+        }) =>
+          `<li class="gallery__item card-set__item">
+            <a class="gallery__link link" href="${largeImageURL}">
+              <div class="gallery__thumb">
+                <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" />
+              </div>  
+              <div class="gallery__info">
+                <p class="gallery__info-item">
+                  <b>Likes</b>${likes}
+                </p>
+                <p class="gallery__info-item">
+                  <b>Views</b>${views}
+                </p>
+                <p class="gallery__info-item">
+                  <b>Comments</b>${comments}
+                </p>
+                <p class="gallery__info-item">
+                  <b>Downloads</b>${downloads}
+                </p>
+              </div>
+            </a>
+          </li>`
+      )
+      .join('');
+  
+    elem.insertAdjacentHTML('beforeend', markup);
+  }
+  
+  export function clearGalleryMarkup(elem) {
+    elem.innerHTML = '';
+  }
